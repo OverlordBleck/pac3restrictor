@@ -1,4 +1,4 @@
-util.AddNetworkString("pac_restrictor_sendRanks")
+util.AddNetworkString("b_pac_restrictor_sendRanks")
 
 function pacRestrictor:initDataFolder()
     file.Write("pac3restrictioninfo.txt", "DATA")
@@ -18,7 +18,7 @@ function pacRestrictor:fetchRanks()
     local tbl = util.JSONToTable(data)
     self.RestrictedRanks = tbl
 
-    net.Start("pac_restrictor_sendRanks")
+    net.Start("b_pac_restrictor_sendRanks")
         net.WriteTable(tbl)
     net.Broadcast()
 end

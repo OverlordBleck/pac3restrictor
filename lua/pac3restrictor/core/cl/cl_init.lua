@@ -22,8 +22,12 @@ hook.Add( "PopulateToolMenu", "CustomMenuSettings", function()
         rankListUneffected:SetSortable(false)
         rankListUneffected:AddColumn("Ranks")
 
-        for _, group in pairs(team.GetAllTeams()) do
-            rankListUneffected:AddLine(group.Name)
+        if ULib then
+            local ulxGroups = ULib.ucl.getInheritanceTree()
+            PrintTable(ulxGroups)
+            for _, group in pairs(ulxGroups) do
+                rankListUneffected:AddLine(group.Name)
+            end
         end
 
         local rankListEffected = vgui.Create("DListView", subPanel)
