@@ -1,15 +1,17 @@
 util.AddNetworkString("pac_restrictor_sendRanks")
 
 function pacRestrictor:initDataFolder()
-    file.Write("pac3RestrictionInfo.txt", "")
+    file.Write("pac3restrictioninfo.txt", "DATA")
 
     return ""
 end
 
 function pacRestrictor:fetchRanks()
-    local data = file.Read("pac3RestrictionInfo.txt")
+    local doesExist = file.Exists("pac3restrictioninfo.txt", "DATA")
 
-    if data == nil then
+    if doesExist then
+        data = file.Read("pac3restrictioninfo.txt", "DATA")
+    else
         data = self:initDataFolder()
     end
 
