@@ -1,4 +1,4 @@
-util.AddNetworkString("b_pac_restrictor_sendRanks")
+util.AddNetworkString("pac_restrictor_sendRanks")
 
 --cl
 AddCSLuaFile("pac3restrictor/core/cl/cl_init.lua")
@@ -21,7 +21,7 @@ function pacRestrictor:fetchRanks()
     local tbl = util.JSONToTable(data)
     self.RestrictedRanks = tbl
 
-    net.Start("b_pac_restrictor_sendRanks")
+    net.Start("pac_restrictor_sendRanks")
         net.WriteTable(tbl)
     net.Broadcast()
 end
