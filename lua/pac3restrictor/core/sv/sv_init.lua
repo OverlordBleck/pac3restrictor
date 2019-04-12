@@ -1,5 +1,8 @@
 util.AddNetworkString("b_pac_restrictor_sendRanks")
 
+--cl
+AddCSLuaFile("pac3restrictor/core/cl/cl_init.lua")
+
 function pacRestrictor:initDataFolder()
     file.Write("pac3restrictioninfo.txt", "DATA")
 
