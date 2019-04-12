@@ -24,7 +24,8 @@ hook.Add( "PopulateToolMenu", "CustomMenuSettings", function()
 
         if ULib then
             local ulxGroups = ULib.ucl.getInheritanceTree()
-            PrintTable(ulxGroups)
+            PrintTable(table.GetKeys(ulxGroups))
+            print(table.IsSequential(ulxGroups))
             for _, group in pairs(table.GetKeys(ulxGroups)) do
                 rankListUneffected:AddLine(group)
             end
