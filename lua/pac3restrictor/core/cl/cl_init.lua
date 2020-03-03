@@ -1,11 +1,11 @@
 
 net.Receive( "pac_restrictor_sendRanks", function( len )
     pacRestrictor.RestrictedRanks = net.ReadTable()
-    print( table.Count( pacRestrictor.RestrictedRanks ) )
 end )
 
 hook.Add( "PopulateToolMenu", "CustomMenuSettings", function()
     spawnmenu.AddToolMenuOption( "Utilities", "Admin", "pac_restrictor", "PAC Restrictor", "", "", function( panel )
+        print("test")
         panel:ClearControls()
         panel:Help( "Restricts pacs to certain groups and players." )
 
@@ -21,6 +21,7 @@ hook.Add( "PopulateToolMenu", "CustomMenuSettings", function()
         rankListUneffected:Dock( LEFT )
         rankListUneffected:SetSortable( false )
         rankListUneffected:AddColumn( "Ranks" )
+        rankListUneffected:SetMultiSelect( false )
 
         if ULib then
             local ulxGroups = ULib.ucl.groups
@@ -35,15 +36,32 @@ hook.Add( "PopulateToolMenu", "CustomMenuSettings", function()
         rankListEffected:Dock( RIGHT )
         rankListEffected:SetSortable( false )
         rankListEffected:AddColumn( "Restricted Ranks" )
+        rankListEffected:SetMultiSelect( false )
 
         local moveOverBut = vgui.Create( "DButton", subPanel )
         moveOverBut:DockMargin( 5, 10, 5, 10 )
         moveOverBut:Dock( TOP )
         moveOverBut:SetText( ">>" )
 
+        moveOverBut.DoClick = function()
+            local uneffLineID, text = rankListUneffected:GetSelectedLine()
+            text = text:GetColumnText( 1 )
+
+            rankListUneffected:RemoveLine( uneffLineID )
+            rankListEffected:AddLine( text )
+        end
+
         local moveBackBut = vgui.Create( "DButton", subPanel )
         moveBackBut:DockMargin( 5, 10, 5, 10 )
         moveBackBut:Dock( BOTTOM )
         moveBackBut:SetText( "<<" )
+
+        moveBackBut.DoClick = function()
+            local effLineID, text = rankListEffected:GetSelectedLine()
+            text = text:GetColumnText( 1 )
+
+            rankListEffected:RemoveLine( effLineID )
+            rankListUneffected:AddLine( text )
+        end
     end )
 end )

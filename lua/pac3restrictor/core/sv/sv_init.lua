@@ -1,21 +1,14 @@
+local filename = "pac3restrictioninfo.json"
+
 util.AddNetworkString( "pac_restrictor_sendRanks" )
 
---cl
-AddCSLuaFile( "pac3restrictor/core/cl/cl_init.lua" )
-
-function pacRestrictor:initDataFolder()
-    file.Write( "pac3restrictioninfo.txt", "DATA" )
-
-    return ""
-end
-
 function pacRestrictor:fetchRanks()
-    local doesExist = file.Exists( "pac3restrictioninfo.txt", "DATA" )
+    local data = ""
 
-    if doesExist then
-        data = file.Read( "pac3restrictioninfo.txt", "DATA" )
+    if file.Exists( filename, "DATA" ) then
+        data = file.Read( filename, "DATA" )
     else
-        data = self:initDataFolder()
+        file.Write( filename, "" )
     end
 
     local tbl = util.JSONToTable( data )
