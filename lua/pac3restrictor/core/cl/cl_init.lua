@@ -1,3 +1,15 @@
+-- Returns a table of elements that arent shared between tables
+local function tableDiff( table1, table2 )
+    local out = {}
+
+    for _, v in pairs( table1 ) do
+        if not table.HasValue( table2, v ) then 
+            table.insert( out, v )
+        end
+    end
+
+    return out
+end
 
 net.Receive( "pac_restrictor_sendRanks", function( len )
     pacRestrictor.RestrictedRanks = net.ReadTable()
@@ -5,7 +17,6 @@ end )
 
 hook.Add( "PopulateToolMenu", "CustomMenuSettings", function()
     spawnmenu.AddToolMenuOption( "Utilities", "Admin", "pac_restrictor", "PAC Restrictor", "", "", function( panel )
-        print("test")
         panel:ClearControls()
         panel:Help( "Restricts pacs to certain groups and players." )
 
@@ -23,14 +34,6 @@ hook.Add( "PopulateToolMenu", "CustomMenuSettings", function()
         rankListUneffected:AddColumn( "Ranks" )
         rankListUneffected:SetMultiSelect( false )
 
-        if ULib then
-            local ulxGroups = ULib.ucl.groups
-
-            for group, _ in pairs( ulxGroups ) do
-                rankListUneffected:AddLine( group )
-            end
-        end
-
         local rankListEffected = vgui.Create( "DListView", subPanel )
         rankListEffected:SetWide( wide * 2 )
         rankListEffected:Dock( RIGHT )
@@ -44,10 +47,14 @@ hook.Add( "PopulateToolMenu", "CustomMenuSettings", function()
         moveOverBut:SetText( ">>" )
 
         moveOverBut.DoClick = function()
-            local uneffLineID, text = rankListUneffected:GetSelectedLine()
-            text = text:GetColumnText( 1 )
+            if not LocalPlayer():IsSuperAdmin() then return end
 
-            rankListUneffected:RemoveLine( uneffLineID )
+            local lineID, line = rankListUneffected:GetSelectedLine()
+            if not IsValid( line ) then return end
+
+            text = line:GetColumnText( 1 )
+
+            rankListUneffected:RemoveLine( lineID )
             rankListEffected:AddLine( text )
         end
 
@@ -57,11 +64,31 @@ hook.Add( "PopulateToolMenu", "CustomMenuSettings", function()
         moveBackBut:SetText( "<<" )
 
         moveBackBut.DoClick = function()
-            local effLineID, text = rankListEffected:GetSelectedLine()
-            text = text:GetColumnText( 1 )
+            if not LocalPlayer():IsSuperAdmin() then return end
 
-            rankListEffected:RemoveLine( effLineID )
+            local lineID, line = rankListEffected:GetSelectedLine()
+            if not IsValid( line ) then return end
+
+            text = line:GetColumnText( 1 )
+
+            rankListEffected:RemoveLine( lineID )
             rankListUneffected:AddLine( text )
         end
+
+        timer.Simple( 0.1, function()
+            if ULib then
+                local ulxGroups = table.GetKeys( ULib.ucl.groups )
+                local unrestrictedGroups = tableDiff( ulxGroups, pacRestrictor.RestrictedRanks )
+                local restrictedGroups = pacRestrictor.RestrictedRanks
+
+                for _, group in pairs( unrestrictedGroups ) do
+                    rankListUneffected:AddLine( group )
+                end
+
+                for _, group in pairs( restrictedGroups ) do
+                    rankListEffected:AddLine( group )
+                end
+            end
+        end )
     end )
 end )

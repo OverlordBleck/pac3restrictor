@@ -24,5 +24,13 @@ function pacRestrictor:InitializeRestrictor()
 
     self:fetchRanks()
 end
-
 hook.Add( "Initialize", "initialize_pac_restrictor", pacRestrictor:InitializeRestrictor() )
+
+local function onPlayerInitSpawn( ply )
+    timer.Simple( 5, function()
+        net.Start( "pac_restrictor_sendRanks" )
+            net.WriteTable( pacRestrictor.RestrictedRanks )
+        net.Send( ply )
+    end )
+end
+hook.Add( "PlayerInitialSpawn", "pac3restrictor_ply_init", onPlayerInitSpawn )
